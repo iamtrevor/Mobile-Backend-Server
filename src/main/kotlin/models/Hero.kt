@@ -1,10 +1,14 @@
 package com.example.models
 
+import kotlinx.serialization.Serializable
+
 
 //a response
 //to send a list of multiple
 //heroes as a class
 
+
+@Serializable //allows us to convert this object as a json response
 data class Hero(
     val id: Int,
     val name: String,

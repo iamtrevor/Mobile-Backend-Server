@@ -1,7 +1,10 @@
 package com.example.models
 
+import kotlinx.serialization.Serializable
+
 
 //will contain a list of heroes
+@Serializable //allows us to convert this object as a json response
 data class ApiResponse(
     val success: Boolean,
     val message: String?=null,
