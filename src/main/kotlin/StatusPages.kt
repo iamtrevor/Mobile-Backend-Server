@@ -9,13 +9,6 @@ import javax.naming.AuthenticationException
 
 fun Application.configureStatusPages() {
     install(StatusPages){
-        status(HttpStatusCode.NotFound) { call, _ ->
-            call.respond(
-                message = "Page not found",
-                status = HttpStatusCode.NotFound
-            )
-        }
-        
         exception<AuthenticationException> { call, _ ->
             call.respond(
                 message = "We caught an exception",

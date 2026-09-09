@@ -77,9 +77,44 @@ class ServerTest {
 
 
 
+    @Test
+    fun `access all heroes endpoint, query non-existing page number, assert error`() = testApplication{
+        val heroRepository = HeroRepositoryImpl()
+        application {
+            module()
+        }
+        //expected response from server
+        val expected = ApiResponse(
+            success = false,
+            message = "Heroes not found"
+        )
+        val response = client.get("/boruto/heroes?page=6")
+        // actual response from server
+        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText())
+        assertEquals(expected = HttpStatusCode.NotFound, actual = response.status)
+        assertEquals(expected, actual)
+    }
 
+
+    
+    @Test
+    fun `access all heroes endpoint, query invalid page number, assert error`() = testApplication{
+        val heroRepository = HeroRepositoryImpl()
+        application {
+            module()
+        }
+        //expected response from server
+        val expected = ApiResponse(
+            success = false,
+            message = "Only Numbers allowed"
+        )
+        val response = client.get("/boruto/heroes?page=invalid")
+        // actual response from server
+        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText())
+        assertEquals(expected = HttpStatusCode.BadRequest, actual = response.status)
+        assertEquals(expected = expected, actual = actual)
+    }
 }
-
 
 
 
