@@ -8,7 +8,7 @@ import io.ktor.server.http.content.resources
 import io.ktor.server.http.content.static
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-
+import javax.naming.AuthenticationException
 
 
 fun Application.configureRouting() {
@@ -16,6 +16,10 @@ fun Application.configureRouting() {
         root()
         getAllHeroes()
         searchHeroes()
+
+        get("/test2"){
+            throw AuthenticationException()
+        }
 
         static("/images"){
             resources("images")
