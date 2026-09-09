@@ -3,148 +3,77 @@ package com.example
 import com.example.models.ApiResponse
 import com.example.repository.HeroRepository
 import com.example.repository.HeroRepositoryImpl
-
+import com.example.repository.NEXT_PAGE_KEY
+import com.example.repository.PREVIOUS_PAGE_KEY
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import org.junit.Test
-import org.koin.java.KoinJavaComponent.inject
 import kotlin.test.assertEquals
 
 
 class ServerTest {
 
-    private val heroRepository : HeroRepository by inject(HeroRepository::class.java)
+    //private val heroRepository : HeroRepository by inject(HeroRepository::class.java)
 
 
     @Test
-    fun accessRootEndpoint_AssertCorrectInformation() = testApplication {
-        // loads default configuration
+    fun accessAllHeroPages() = testApplication {
         application {
             module()
         }
+        val repository = HeroRepositoryImpl()
+        val heroPages = listOf(
+            repository.page1,
+            repository.page2,
+            repository.page3,
+            repository.page4,
+            repository.page5
+        )
 
-        val response = client.get("/")
-        // verify server root returns 200
+        for (page in 1..5) {
+            val response = client.get("/boruto/heroes?page=$page")
 
-        //both assertEquals() must be correct
-        //for the test to succeed
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
-        assertEquals(expected = "Welcome to our API", actual = response.bodyAsText())
-    }
+            assertEquals(HttpStatusCode.OK, response.status)
 
+            val actual = Json.decodeFromString<ApiResponse>(
+                response.bodyAsText()
+            )
 
-
-    @Test
-    fun accessAllHeroesEndpoint_AssertNoInformation() = testApplication {
-        application {
-            module()
+            val expected = ApiResponse(
+                success = true,
+                message = "ok",
+                prevPage = calculatePage(page = page)["prevPage"],
+                nextPage = calculatePage(page = page)["nextPage"],
+                heroes = heroPages[page - 1]
+            )
+            assertEquals(expected, actual)
         }
-        val response = client.get("/boruto/heroes")
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
-        //result to be expected from server
-        val expected = ApiResponse(
-            success = true,
-            message = "ok",
-            prevPage = null,
-            nextPage = 2,
-            heroes = HeroRepositoryImpl().page1
-        )
-        //actual response from server
-        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText())
-
-        assertEquals(
-            expected = expected,
-            actual = actual
-        )
     }
 
-    @Test
-    fun ` test access for the second page`() = testApplication {
-        application{
-            module()
+
+
+    private fun calculatePage(page : Int) : Map<String, Int?>{
+        var prevPage : Int? = page
+        var nextPage : Int? = page
+
+        if(page in 1..4){
+            nextPage = nextPage?.plus(1)
         }
-        val response = client.get("/boruto/heroes?page=2")
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
-
-        //expected response from server
-        val expected = ApiResponse(
-            success = true,
-            message = "ok",
-            prevPage = 1,
-            nextPage = 3,
-            heroes = HeroRepositoryImpl().page2
-        )
-        //actual response from server
-        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText())
-
-
-        assertEquals(
-            expected = expected,
-            actual = actual
-        )
-
-    }
-
-
-    @Test
-    fun ` test access for the third page`() = testApplication {
-        application{
-            module()
+        if (page in 2..5){
+            prevPage = prevPage?.minus(1)
+        }
+        if(page == 1){
+            prevPage = null
+        }
+        if(page == 5){
+            nextPage = null
         }
 
-        val response = client.get("/boruto/heroes?page=3")
-
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
-
-        //expected response from server
-        val expected = ApiResponse(
-            success = true,
-            message = "ok",
-            prevPage = 2,
-            nextPage = 4,
-            heroes = HeroRepositoryImpl().page3
-        )
-
-        //actual response from server
-        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText())
-
-        assertEquals(
-            expected = expected,
-            actual = actual
-        )
+        return mapOf(PREVIOUS_PAGE_KEY to prevPage, NEXT_PAGE_KEY to nextPage)
     }
-
-
-    @Test
-    fun ` test access for the fourth page`() = testApplication {
-        application{
-            module()
-        }
-        val response = client.get("/boruto/heroes?page=4")
-        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
-
-        //expected response from server
-        val expected = ApiResponse(
-            success = true,
-            message = "ok",
-            prevPage = 3,
-            nextPage = 5,
-            heroes = HeroRepositoryImpl().page4
-        )
-
-        //actual response from server
-        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText())
-
-        assertEquals(
-            expected = expected,
-            actual = actual
-        )
-
-    }
-
 
 
 

@@ -22,6 +22,7 @@ dependencies {
     implementation(ktorLibs.server.contentNegotiation)
     implementation(ktorLibs.server.core)
     implementation(ktorLibs.server.netty)
+    implementation("io.ktor:ktor-server-status-pages:3.5.2")
     implementation(libs.logback.classic)
 
     //koin di
@@ -31,4 +32,5 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
+    testImplementation("io.insert-koin:koin-logger-slf4j:${koinVersion}")
 }
