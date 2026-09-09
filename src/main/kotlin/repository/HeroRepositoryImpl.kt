@@ -416,6 +416,8 @@ class HeroRepositoryImpl() : HeroRepository {
     }
 
 
+
+
     private fun calculatePage(page : Int) : Map<String, Int?>{
         var prevPage : Int? = page
         var nextPage : Int? = page
@@ -438,7 +440,7 @@ class HeroRepositoryImpl() : HeroRepository {
 
 
 
-    override suspend fun searchHeroes(name: String): ApiResponse {
+    override suspend fun searchHeroes(name: String?): ApiResponse {
         return ApiResponse(
             success = true,
             message = "ok",
