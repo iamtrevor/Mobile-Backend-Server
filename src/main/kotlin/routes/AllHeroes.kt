@@ -1,13 +1,18 @@
 package com.example.routes
 
 import com.example.models.ApiResponse
+import com.example.repository.HeroRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import org.koin.ktor.ext.inject
 
 
 fun Route.getAllHeroes() {
+
+    //injecting heroRepository implementation
+    val heroRepository : HeroRepository by inject()
 
     get("/boruto/heroes"){
         try {
@@ -15,7 +20,9 @@ fun Route.getAllHeroes() {
 
             require(page in 1..5)
 
-            call.respond(message = page)
+            val apiResponse = heroRepository.getAllHeroes(page = page)
+
+            call.respond(message = apiResponse, status = HttpStatusCode.OK)
 
         } catch (e: NumberFormatException){
             call.respond(
@@ -27,10 +34,8 @@ fun Route.getAllHeroes() {
             call.respond(
                 message = ApiResponse(success = false,
                     message = "Heroes not found"),
-                status = HttpStatusCode.BadRequest
+                status = HttpStatusCode.NotFound
             )
         }
-
-
     }
 }
