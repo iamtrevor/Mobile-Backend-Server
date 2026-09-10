@@ -11,8 +11,8 @@ fun Application.configureStatusPages() {
     install(StatusPages){
         exception<AuthenticationException> { call, _ ->
             call.respond(
-                message = "We caught an exception",
-                status = HttpStatusCode.OK
+                message = "Page not Found",
+                status = HttpStatusCode.NotFound
             )
         }
         

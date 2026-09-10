@@ -1,6 +1,7 @@
 package com.example
 
 import com.example.models.ApiResponse
+import com.example.models.Hero
 import com.example.repository.HeroRepository
 import com.example.repository.HeroRepositoryImpl
 import com.example.repository.NEXT_PAGE_KEY
@@ -9,8 +10,10 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
+import io.ktor.utils.io.InternalAPI
 import kotlinx.serialization.json.Json
 import org.junit.Test
+//import java.util.Collections.emptyList
 import kotlin.test.assertEquals
 
 
@@ -79,7 +82,7 @@ class ServerTest {
 
     @Test
     fun `access all heroes endpoint, query non-existing page number, assert error`() = testApplication{
-        val heroRepository = HeroRepositoryImpl()
+
         application {
             module()
         }
@@ -114,9 +117,93 @@ class ServerTest {
         assertEquals(expected = HttpStatusCode.BadRequest, actual = response.status)
         assertEquals(expected = expected, actual = actual)
     }
+
+
+
+    //to test for a single hero [Sasuke]
+    @Test
+    fun `access search heroes endpoint, query hero name, assert single hero`() = testApplication{
+
+        application {
+            module()
+        }
+
+        val response = client.get("/boruto/heroes/search?name=sas")
+        // actual response size from server
+        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText()).heroes.size
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(expected = 1, actual = actual)
+    }
+
+
+
+    //to test endpoint for multiple heroes
+    @Test
+    fun `access all heroes endpoint, query invalid page number, assert multiple heroes`() = testApplication{
+
+        application {
+            module()
+        }
+
+        val response = client.get("/boruto/heroes/search?name=sa")
+        // actual response size from server
+        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText()).heroes.size
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(expected = 3, actual = actual)
+    }
+
+
+    //to test access to  heroes
+    @Test
+    fun `access search heroes endpoint, query an empty text, assert empty list as result`() = testApplication{
+
+        application {
+            module()
+        }
+
+        val response = client.get("/boruto/heroes/search?name=")
+        // actual response size list from server
+        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText()).heroes
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(expected = emptyList<Hero>(), actual = actual)
+    }
+
+
+
+    //to test access to non-existing heroes
+    @Test
+    fun `access search heroes endpoint, query non existing hero, assert empty list as result`() = testApplication{
+
+        application {
+            module()
+        }
+
+        val response = client.get("/boruto/heroes/search?name=unknown")
+        // actual response size list from server
+        val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText()).heroes
+        assertEquals(expected = HttpStatusCode.OK, actual = response.status)
+        assertEquals(expected = emptyList<Hero>(), actual = actual)
+    }
+
+
+    //to test for non-existing endpoints
+    @OptIn(InternalAPI::class)
+    @Test
+    fun `access non existing endpoint, query non existing hero, assert empty list as result`() = testApplication{
+
+        application {
+            module()
+        }
+
+        val response = client.get("/unknown")
+        // actual response size list from server
+        //val actual = Json.decodeFromString<ApiResponse>(response.bodyAsText()).heroes
+        assertEquals(expected = HttpStatusCode.NotFound, actual = response.status)
+        assertEquals(expected = "Page not Found", actual = response.bodyAsText())
+    }
+
+
 }
-
-
 
 
 

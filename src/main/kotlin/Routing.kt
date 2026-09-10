@@ -3,6 +3,7 @@ package com.example
 import com.example.routes.getAllHeroes
 import com.example.routes.root
 import com.example.routes.searchHeroes
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.http.content.resources
 import io.ktor.server.http.content.static
@@ -25,7 +26,13 @@ fun Application.configureRouting() {
             resources("images")
         }
 
+        get("{...}") {
+            call.respondText(
+                text = "Page not Found",
+                status = HttpStatusCode.NotFound
+            )
+        }
+
     }
 }
-
 
