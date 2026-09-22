@@ -11,4 +11,5 @@ data class ApiResponse(
     val prevPage: Int?=null, //the android app will support paging 3 library
     val nextPage: Int?=null, //the android app will support paging 3 library
     val heroes: List<Hero> = emptyList(),
+    val lastUpdated: Long? = null,
 )

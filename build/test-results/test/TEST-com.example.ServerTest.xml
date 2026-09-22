@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.ServerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-08T13:34:44.999Z" hostname="Trevors-MacBook-Air.local" time="1.011">
+<testsuite name="com.example.ServerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-10T06:23:05.543Z" hostname="Trevors-MacBook-Air.local" time="0.829">
   <properties/>
-  <testcase name="test root endpoint" classname="com.example.ServerTest" time="1.008"/>
-  <system-out><![CDATA[2026-09-08 16:34:45.543 [DefaultDispatcher-worker-2 @coroutine#4] INFO  [Koin] - Started 1 definitions in 1.937 ms
+  <testcase name="access non existing endpoint, query non existing hero, assert empty list as result" classname="com.example.ServerTest" time="0.827"/>
+  <system-out><![CDATA[2026-09-10 09:23:05.957 [DefaultDispatcher-worker-2 @call-context#3] INFO  io.ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active.
+2026-09-10 09:23:05.989 [DefaultDispatcher-worker-2 @coroutine#4] INFO  [Koin] - Started 1 definitions in 2.003 ms
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
